@@ -3,10 +3,12 @@ import { fetchMovieVideos } from "../../../../../lib/tmdb";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = context.params;
+    // Next.js may provide params as a Promise in some runtimes — await it defensively
+    const params = await context.params;
+    const { id } = params;
     const videos = await fetchMovieVideos(id);
 
     return NextResponse.json({ results: videos });
